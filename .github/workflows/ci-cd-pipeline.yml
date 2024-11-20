@@ -17,10 +17,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install vCluster CLI
-        uses: loft-sh/setup-vcluster@main
+        uses: loft-sh/setup-loft@main
         with:
           url: ${{ secrets.LOFT_URL }}
-          access-key: ${{ secrets.ACCESS_KEY }}
+          access-key: ${{ secrets.LOFT_ACCESS_KEY }}
 
       - name: Create Virtual Cluster for PR
         uses: loft-sh/create-vcluster@main
