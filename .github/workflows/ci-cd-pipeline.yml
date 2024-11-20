@@ -22,11 +22,11 @@ jobs:
           url: ${{ secrets.LOFT_URL }}
           access-key: ${{ secrets.ACCESS_KEY }}
 
-      - name: Create Virtual Cluster
-        env:
-          NAME: pr-${{ github.event.pull_request.number }}-${{ github.sha }}-${{ github.run_id }}
-        run: |
-          vcluster create $NAME --project default --upgrade
+       - name: Create Virtual Cluster for PR
+        uses: loft-sh/create-vcluster@main
+        with:
+          name: pr-${{ github.event.pull_request.number }}-${{ github.sha }}-${{ github.run_id }}
+          auto-cleanup: true
 
       - name: Deploy Application
         run: |
@@ -39,7 +39,3 @@ jobs:
       - name: Run Tests
         run: |
           curl http://my-app.default.svc.cluster.local:30001 # Adjust as necessary based on your service configuration
-
-      - name: Cleanup Virtual Cluster
-        run: |
-          vcluster delete $NAME --project default
