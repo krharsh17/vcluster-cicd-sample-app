@@ -1,0 +1,45 @@
+name: CI/CD Pipeline with vCluster
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Install vCluster CLI
+        uses: loft-sh/setup-vcluster@main
+        with:
+          url: ${{ secrets.LOFT_URL }}
+          access-key: ${{ secrets.ACCESS_KEY }}
+
+      - name: Create Virtual Cluster
+        env:
+          NAME: pr-${{ github.event.pull_request.number }}-${{ github.sha }}-${{ github.run_id }}
+        run: |
+          vcluster create $NAME --project default --upgrade
+
+      - name: Deploy Application
+        run: |
+          kubectl apply -Rf ./k8s --context=$NAME
+
+      - name: Wait for Deployment
+        run: |
+          kubectl rollout status deployment/my-app --context=$NAME
+
+      - name: Run Tests
+        run: |
+          curl http://my-app.default.svc.cluster.local:30001 # Adjust as necessary based on your service configuration
+
+      - name: Cleanup Virtual Cluster
+        run: |
+          vcluster delete $NAME --project default
