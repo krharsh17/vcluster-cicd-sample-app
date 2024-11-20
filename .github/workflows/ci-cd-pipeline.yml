@@ -22,7 +22,7 @@ jobs:
           url: ${{ secrets.LOFT_URL }}
           access-key: ${{ secrets.ACCESS_KEY }}
 
-       - name: Create Virtual Cluster for PR
+      - name: Create Virtual Cluster for PR
         uses: loft-sh/create-vcluster@main
         with:
           name: pr-${{ github.event.pull_request.number }}-${{ github.sha }}-${{ github.run_id }}
