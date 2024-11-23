@@ -1,45 +1,26 @@
-name: CI/CD Pipeline with vCluster
+name: CI/CD Pipeline with vcluster
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
-      - main
+      - "main"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
       - name: Install vCluster CLI
         uses: loft-sh/setup-vcluster@main
-        with:
-          url: ${{ secrets.LOFT_URL }}
-          access-key: ${{ secrets.LOFT_ACCESS_KEY }}
-
-      - name: Install Loft CLI
-        uses: loft-sh/setup-loft@main
-        with:
-          url: ${{ secrets.LOFT_URL }}
-          access-key: ${{ secrets.LOFT_ACCESS_KEY }}
-      
       - name: Login to vCluster Platform instance
         env:
           LOFT_URL: ${{ secrets.LOFT_URL }}
-          ACCESS_KEY: ${{ secrets.LOFT_ACCESS_KEY }}
-        run: vcluster login $LOFT_URL --access-key $LOFT_ACCESS_KEY
-
-      - name: Create Virtual Cluster for PR
-        uses: loft-sh/create-vcluster@main
-        with:
-          name: pr-${{ github.event.pull_request.number }}-${{ github.sha }}-${{ github.run_id }}
-          auto-cleanup: true
-
+          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+        run: vcluster login $LOFT_URL --access-key $ACCESS_KEY
+      - name: Create PR Virtual Cluster
+        env:
+          NAME: pr-${{ github.event.pull_request.number }}-${{ github.sha }}-${{ github.run_id }}
+        run: vcluster create $NAME --project default
+      
       - name: Deploy Application
         run: |
           kubectl apply -Rf ./k8s --context=$NAME
@@ -51,3 +32,9 @@ jobs:
       - name: Run Tests
         run: |
           curl http://my-app.default.svc.cluster.local:30001 # Adjust as necessary based on your service configuration
+
+      
+      - name: Delete PR Virtual Cluster
+        env:
+          NAME: pr-${{ github.event.pull_request.number }}-${{ github.sha }}-${{ github.run_id }}
+        run: vcluster delete $NAME --project default
