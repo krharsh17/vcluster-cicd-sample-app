@@ -19,7 +19,7 @@ jobs:
         run: vcluster platform login $LOFT_URL --access-key $LOFT_ACCESS_KEY
       - name: Create PR Virtual Cluster
         env:
-          NAME: pr-${{ github.event.pull_request.number }}
+          NAME: pr-${{ github.event.pull_request.number }}-${{ github.run_id }}
         run: echo $NAME && vcluster create $NAME --project default --debug --driver platform
       
       - name: Deploy Application
