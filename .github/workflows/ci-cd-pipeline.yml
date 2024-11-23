@@ -21,7 +21,8 @@ jobs:
         env:
           NAME: pr-${{ github.event.pull_request.number }}-${{ github.run_id }}
         run: echo $NAME && vcluster create $NAME --project default --debug --driver platform
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Deploy Application
         run: |
           kubectl apply -Rf ./k8s --context=$NAME
