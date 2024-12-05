@@ -69,14 +69,7 @@ jobs:
           name: pr-${{ github.sha }}
           auto-cleanup: true
 
-      - name: Configure kubectl to use the Virtual Cluster
-        run: vcluster connect pr-${{ github.sha }} --namespace vcluster --kube-config kubeconfig.yaml
-        env:
-          KUBECONFIG: kubeconfig.yaml
-
       - name: Deploy to Kubernetes
-        env:
-          KUBECONFIG: kubeconfig.yaml
         run: |
           kubectl apply -Rf ./kubernetes
           kubectl rollout status deployments/my-app
