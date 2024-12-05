@@ -71,7 +71,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -Rf ./kubernetes
+          kubectl apply -Rf ./k8s
           kubectl rollout status deployments/my-app
 
   e2e-tests:
