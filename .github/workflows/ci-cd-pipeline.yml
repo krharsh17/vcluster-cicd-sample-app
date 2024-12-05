@@ -79,7 +79,7 @@ jobs:
       - name: Run E2E Tests
         run: npm run e2e
 
-      - name: Delete Virtual Cluster
-        uses: loft-sh/delete-vcluster@main
-        with:
-          name: pr-${{ github.sha }}
+      # - name: Delete Virtual Cluster
+      #   uses: loft-sh/delete-vcluster@main
+      #   with:
+      #     name: pr-${{ github.sha }}
