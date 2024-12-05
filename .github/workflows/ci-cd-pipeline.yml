@@ -67,7 +67,6 @@ jobs:
         uses: loft-sh/create-vcluster@main
         with:
           name: pr-${{ github.sha }}
-          auto-cleanup: true
       
       - name: Checkout Code
         uses: actions/checkout@v3
