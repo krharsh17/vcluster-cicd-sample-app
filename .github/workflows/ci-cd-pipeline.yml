@@ -68,6 +68,9 @@ jobs:
         with:
           name: pr-${{ github.sha }}
           auto-cleanup: true
+      
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
       - name: Deploy to Kubernetes
         run: |
