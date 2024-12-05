@@ -75,21 +75,6 @@ jobs:
         run: |
           kubectl apply -Rf ./k8s
           kubectl rollout status deployments/my-app
-      - name: Wait for Application to be Ready
-        env:
-          KUBECONFIG: kubeconfig.yaml
-        run: |
-          kubectl wait --for=condition=ready pod -l app=my-app --timeout=120s
-
-      - name: Fetch Application URL
-        env:
-          KUBECONFIG: kubeconfig.yaml
-        id: app-url
-        run: |
-          export APP_URL=$(kubectl get svc my-app-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
-          echo "APP_URL=$APP_URL" >> $GITHUB_ENV
 
       - name: Run E2E Tests
-        env:
-          BASE_URL: ${{ env.APP_URL }}
         run: npm run e2e
