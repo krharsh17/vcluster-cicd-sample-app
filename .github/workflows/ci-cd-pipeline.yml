@@ -69,11 +69,11 @@ jobs:
       - name: Create Virtual Cluster for PR
         uses: loft-sh/create-vcluster@main
         with:
-          name: pr-${{ github.event.pull_request.number }}
+          name: pr-${{ github.sha }}
           auto-cleanup: true
 
       - name: Configure kubectl to use the Virtual Cluster
-        run: vcluster connect pr-${{ github.event.pull_request.number }} --namespace vcluster --kube-config kubeconfig.yaml
+        run: vcluster connect pr-${{ github.sha }} --namespace vcluster --kube-config kubeconfig.yaml
         env:
           KUBECONFIG: kubeconfig.yaml
 
