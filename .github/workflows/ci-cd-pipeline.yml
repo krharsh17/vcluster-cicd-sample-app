@@ -50,7 +50,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
   
 
-  deploy:
+  deploy-and-test:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -75,11 +75,6 @@ jobs:
         run: |
           kubectl apply -Rf ./k8s
           kubectl rollout status deployments/my-app
-
-  e2e-tests:
-    needs: deploy
-    runs-on: ubuntu-latest
-    steps:
       - name: Wait for Application to be Ready
         env:
           KUBECONFIG: kubeconfig.yaml
