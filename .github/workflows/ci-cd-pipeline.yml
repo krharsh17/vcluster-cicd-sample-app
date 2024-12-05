@@ -40,7 +40,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: my-docker-hub-namespace/my-docker-hub-repository
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/vcluster-ci-cd-sample
   
       - name: Build and push Docker image
         id: push
@@ -63,7 +63,7 @@ jobs:
       - name: Login to vCluster Platform instance
         env:
           LOFT_URL: ${{ secrets.LOFT_URL }}
-          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+          ACCESS_KEY: ${{ secrets.LOFT_ACCESS_KEY }}
         run: vcluster login $LOFT_URL --access-key $ACCESS_KEY
 
       - name: Create Virtual Cluster for PR
