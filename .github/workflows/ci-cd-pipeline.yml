@@ -27,9 +27,6 @@ jobs:
       - name: Run Tests
         run: npm test
 
-      - name: Build Docker Image
-        run: docker build -t my-node-app:${{ github.sha }} .
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -81,9 +78,8 @@ jobs:
         env:
           KUBECONFIG: kubeconfig.yaml
         run: |
-          kubectl apply -f k8s/deployment.yaml
-          kubectl set image deployment/my-node-app my-node-app=my-registry/my-node-app:${{ github.sha }}
-          kubectl rollout status deployment/my-node-app
+          kubectl apply -Rf ./kubernetes
+          kubectl rollout status deployments/my-app
 
   e2e-tests:
     needs: deploy
@@ -93,14 +89,14 @@ jobs:
         env:
           KUBECONFIG: kubeconfig.yaml
         run: |
-          kubectl wait --for=condition=ready pod -l app=my-node-app --timeout=120s
+          kubectl wait --for=condition=ready pod -l app=my-app --timeout=120s
 
       - name: Fetch Application URL
         env:
           KUBECONFIG: kubeconfig.yaml
         id: app-url
         run: |
-          export APP_URL=$(kubectl get svc my-node-app -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          export APP_URL=$(kubectl get svc my-app-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
           echo "APP_URL=$APP_URL" >> $GITHUB_ENV
 
       - name: Run E2E Tests

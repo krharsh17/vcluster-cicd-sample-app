@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: my-app
-        image: my-app-image:latest
+        image: krharsh17/vcluster-ci-cd-sample:latest
         ports:
         - containerPort: 3000
